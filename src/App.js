@@ -8,13 +8,50 @@ const API_KEY = "bf68996d2a372114b8d51e7154fb28df";
 
 class App extends React.Component {
 
-  gettingWeather = async (e) => {   // e->от слова event.
-    e.preventDefault();             // данная строка говорит о том что мы должны уничтожить обыкновенное поведение страницы (перезагрузку). 
+  state = {
+    temp: undefined,
+    city: undefined,
+    country: undefined,
+    pressure: undefined,
+    sunset: undefined,
+    error: undefined
+  }
+
+  gettingWeather = async (e) => {  
+     // e -> от слова event.
+    e.preventDefault();             
+    // строка выше говорит о том что мы должны уничтожить обыкновенное поведение страницы (перезагрузку). 
     const city = e.target.elements.city.value;
-    const api_url = await fetch (
-      `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`)
-    const data = await api_url.json();
-    console.log(data);
+
+    if (city) {
+      const api_url = await fetch (
+        `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`)
+      const data = await api_url.json();
+      
+      var sunset = data.sys.sunset;
+      var date = new Date ();
+      date.setTime(sunset*1000); 
+        //данные вычисляются в милисекундах, а от API приходят в секундах. 
+        // Конвертируем в секунды домножив на 1000
+      var options = {
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
+        hour12: false
+      }
+
+      var sunset_date = date.toLocaleString('en-GB', options);
+
+      this.setState({
+        temp: data.main.temp,
+        city: data.name,
+        country: data.sys.country,
+        pressure: data.main.pressure,
+        sunset: sunset_date,
+        error: ""
+      }); 
+    }
+
   }
 
   render () {
@@ -22,7 +59,14 @@ class App extends React.Component {
         <div>
           <Info />
           <Form weatherMethod={this.gettingWeather} />
-          <Weather />
+          <Weather 
+            temp={this.state.temp}
+            city={this.state.city}
+            country={this.state.country}
+            pressure={this.state.pressure}
+            sunset={this.state.sunset}
+            error={this.state.error}
+          />
         </div>
       );
     }
