@@ -6,7 +6,6 @@ import Weather from './components/Weather'
 
 const API_KEY = "bf68996d2a372114b8d51e7154fb28df";
 
-// Данный компонент не может быть оптизизирован до упрощенного вида компонента, так как имеет состояние.
 
 class App extends React.Component {
 
@@ -20,9 +19,9 @@ class App extends React.Component {
   }
 
   gettingWeather = async (e) => {  
-     // e -> от слова event.
+
     e.preventDefault();             
-    // строка выше говорит о том что мы должны уничтожить обыкновенное поведение страницы (перезагрузку). 
+
     const city = e.target.elements.city.value;
 
     if (city) {
@@ -33,8 +32,6 @@ class App extends React.Component {
       var sunset = data.sys.sunset;
       var date = new Date ();
       date.setTime(sunset*1000); 
-        // данные вычисляются в милисекундах, а от API приходят в секундах. 
-        // Конвертируем в секунды домножив на 1000
       var options = {
         hour: 'numeric',
         minute: 'numeric',
